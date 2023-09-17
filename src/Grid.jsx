@@ -20,6 +20,7 @@ const Grid = () => {
                         state: 'empty',
                         isTarget: false,
                         isStart: false,
+                        isPredecessor: false,
                         isPath: false,
                         isWall: false,
                         visited: false,
