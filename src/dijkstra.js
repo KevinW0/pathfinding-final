@@ -1,15 +1,25 @@
 const dijkstra = async (grid, setGridCellFunction, startCell, targetCell) => {
-    setGridCellFunction(startCell.x, startCell.y, { ...grid[startCell.x][startCell.y], distance: 0, visited: true });
+    setGridCellFunction(startCell.x, startCell.y, { ...grid[startCell.x][startCell.y], distance: 0 });
+
     let candidates = [grid[startCell.x][startCell.y]];
+    let currentNode;
 
-    while (candidates.length != 0 && !grid[targetCell.x][targetCell.y].visited) {
-        const currentNode = findMinAmongstCandidates(candidates);
-
+    do {
+        currentNode = findMinAmongstCandidates(grid.flat());
         setGridCellFunction(currentNode.x, currentNode.y, { ...currentNode, visited: true });
         candidates = getUnvisitedNeighbors(grid, currentNode.x, currentNode.y);
-        updateDistancesAmongstNeighbors(currentNode.distance, candidates, setGridCellFunction);
+        updateDistancesAmongstNeighbors(currentNode, candidates, setGridCellFunction);
         candidates = getUnvisitedNeighbors(grid, currentNode.x, currentNode.y);
-        await delay(20);
+        await delay(1);
+    } while (currentNode && !grid[targetCell.x][targetCell.y].visited);
+
+    if (currentNode) {
+        //set predecessor & path
+        while (currentNode.predecessor.x != -1 && currentNode.predecessor.y != -1) {
+            setGridCellFunction(currentNode.x, currentNode.y, { ...currentNode, isPredecessor: true });
+            currentNode = grid[currentNode.predecessor.x][currentNode.predecessor.y];
+            await delay(10);
+        }
     }
 
     return;
@@ -23,10 +33,15 @@ const delay = (milliseconds) => {
     });
 };
 
-const updateDistancesAmongstNeighbors = (distanceOfCurrentNode, neighborArray, setGridCellFunction) => {
+const updateDistancesAmongstNeighbors = (currentNode, neighborArray, setGridCellFunction) => {
+    const distanceOfCurrentNode = currentNode.distance;
     for (const neighbor of neighborArray) {
         if (distanceOfCurrentNode + 1 < neighbor.distance) {
-            setGridCellFunction(neighbor.x, neighbor.y, { ...neighbor, distance: distanceOfCurrentNode + 1 });
+            setGridCellFunction(neighbor.x, neighbor.y, {
+                ...neighbor,
+                distance: distanceOfCurrentNode + 1,
+                predecessor: { x: currentNode.x, y: currentNode.y },
+            });
         }
     }
 };
@@ -56,7 +71,7 @@ const findMinAmongstCandidates = (candidates) => {
     let minDist = Infinity;
     let currentNode = null;
     for (let i = 0; i < candidates.length; i++) {
-        if (minDist >= candidates[i].distance) {
+        if (!candidates[i].visited && minDist >= candidates[i].distance) {
             minDist = candidates[i].distance;
             currentNode = candidates[i];
         }
