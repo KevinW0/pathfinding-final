@@ -40,7 +40,11 @@ const Grid = () => {
         return;
     };
 
-    useEffect(() => initCells(20, 70), []);
+    const reset = () => {
+        initCells(20, 70);
+    };
+
+    useEffect(() => reset(), []);
     useEffect(() => {
         if (isStartSelected && isTargetSelected) {
             dijkstra(cells, changeCell, startCell, targetCell);
