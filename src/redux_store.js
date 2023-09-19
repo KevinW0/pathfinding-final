@@ -1,8 +1,10 @@
 const startCoordAction = 'ts/start';
 const targetCoordAction = 'ts/target';
+const resetAction = 'ts/reset'
 
+const initialState = { isStartSelected: false, isTargetSelected: false, startCoords: { x: -1, y: -1 }, targetCoords: { x: -1, y: -1 }}
 export const targetStartReducer = (
-    state = { isStartSelected: false, isTargetSelected: false, startCoords: { x: -1, y: -1 }, targetCoords: { x: -1, y: -1 } },
+    state = initialState,
     action = { payload: { x: undefined, y: undefined } }
 ) => {
     const updatedCoordinates = { x: action.payload?.x, y: action.payload?.y };
@@ -11,6 +13,8 @@ export const targetStartReducer = (
             return { ...state, isStartSelected: !state.isStartSelected, startCoords: updatedCoordinates };
         case targetCoordAction:
             return { ...state, isTargetSelected: !state.isTargetSelected, targetCoords: updatedCoordinates };
+        case resetAction:
+            return initialState;
         default:
             return state;
     }
@@ -31,4 +35,5 @@ export const selectors = {
 export const actions = {
     startCoordAction,
     targetCoordAction,
+    resetAction,
 };
