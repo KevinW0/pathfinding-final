@@ -73,7 +73,7 @@ const findMinAmongstCandidates = (candidates) => {
     let minDist = Infinity;
     let currentNode = null;
     for (let i = 0; i < candidates.length; i++) {
-        if (!candidates[i].visited && minDist >= candidates[i].distance) {
+        if (!candidates[i].isWall && !candidates[i].visited && minDist >= candidates[i].distance) {
             minDist = candidates[i].distance;
             currentNode = candidates[i];
         }

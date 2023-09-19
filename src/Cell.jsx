@@ -3,6 +3,7 @@ import { selectors, actions } from './redux_store';
 import { motion } from 'framer-motion';
 import { SiTarget } from 'react-icons/si';
 import { VscDebugStart } from 'react-icons/vsc';
+import { CgBlock } from 'react-icons/cg';
 import InnerCellContentWithIcon from './InnerCellContentWithIcon';
 import InnerCellContentWithColor from './InnerCellContentWithColor';
 const handleCellClick = (isRegularClick) =>
@@ -23,6 +24,14 @@ const handleCellClick = (isRegularClick) =>
               }
           };
 
+const dragHandler = (e, updateInfoFunction, infoObj) => {
+    if (infoObj.isTarget || infoObj.isStart) {
+        return;
+    }
+    updateInfoFunction({ ...infoObj, isWall: !infoObj.isWall });
+    return;
+};
+
 const Cell = ({ infoObj, updateInfoFunc }) => {
     const isStartSelected = useSelector(selectors.selectStartBoolean);
     const isTargetSelected = useSelector(selectors.selectTargetBoolean);
@@ -36,11 +45,13 @@ const Cell = ({ infoObj, updateInfoFunc }) => {
             onContextMenu={(e) => {
                 handleCellClick(false)(e, updateInfoFunc, infoObj, isTargetSelected, dispatchFunc);
             }}
+            onDoubleClick={(e) => dragHandler(e, updateInfoFunc, infoObj)}
             className={className}
             initial={{ scale: 0 }}
             animate={{ rotate: 360, scale: 1 }}
             transition={{ duration: 5 }}
         >
+            {infoObj.isWall && InnerCellContentWithIcon(CgBlock)}
             {infoObj.visited && InnerCellContentWithColor('bg-amber-200')}
             {infoObj.isPredecessor && InnerCellContentWithColor('bg-lime-600')}
             {infoObj.isStart && InnerCellContentWithIcon(VscDebugStart)}
