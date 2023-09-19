@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import dijkstra from './dijkstra';
 import { selectors, actions } from './redux_store';
 
-const Grid = ({ speed, disableControls, setAlgorithms }) => {
+const Grid = ({ speed, disableControls, setAlgorithms, setResetAvailableOnly }) => {
     const [cells, setCells] = useState([]);
     const startCell = useSelector(selectors.selectStartCoords);
     const targetCell = useSelector(selectors.selectTargetCoords);
@@ -42,11 +42,12 @@ const Grid = ({ speed, disableControls, setAlgorithms }) => {
     const reset = () => {
         initCells(20, 70);
         dispatchFunc({ type: actions.resetAction });
+        setResetAvailableOnly(false);
     };
 
     const callDijkstra = (isStartSelected, isTargetSelected) => {
         if (isStartSelected && isTargetSelected) {
-            dijkstra(cells, changeCell, startCell, targetCell, speed, disableControls);
+            dijkstra(cells, changeCell, startCell, targetCell, speed, disableControls, setResetAvailableOnly);
         }
     };
     useEffect(() => {

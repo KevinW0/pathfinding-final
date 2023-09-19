@@ -1,4 +1,4 @@
-const dijkstra = async (grid, setGridCellFunction, startCell, targetCell, speed, disableSpeedControl) => {
+const dijkstra = async (grid, setGridCellFunction, startCell, targetCell, speed, disableSpeedControl, setResetAvailableOnly) => {
     disableSpeedControl(true);
     setGridCellFunction(startCell.x, startCell.y, { ...grid[startCell.x][startCell.y], distance: 0 });
 
@@ -9,6 +9,9 @@ const dijkstra = async (grid, setGridCellFunction, startCell, targetCell, speed,
         currentNode = findMinAmongstCandidates(grid.flat());
         setGridCellFunction(currentNode.x, currentNode.y, { ...currentNode, visited: true });
         candidates = getUnvisitedNeighbors(grid, currentNode.x, currentNode.y);
+        if (candidates.length === 0) {
+            break;
+        }
         updateDistancesAmongstNeighbors(currentNode, candidates, setGridCellFunction);
         candidates = getUnvisitedNeighbors(grid, currentNode.x, currentNode.y);
         await delay(speed);
@@ -19,11 +22,11 @@ const dijkstra = async (grid, setGridCellFunction, startCell, targetCell, speed,
         while (currentNode.predecessor.x != -1 && currentNode.predecessor.y != -1) {
             setGridCellFunction(currentNode.x, currentNode.y, { ...currentNode, isPredecessor: true });
             currentNode = grid[currentNode.predecessor.x][currentNode.predecessor.y];
-            await delay(speed+10);
+            await delay(speed + 10);
         }
     }
-
     disableSpeedControl(false);
+    setResetAvailableOnly(true);
     return;
 };
 
@@ -58,10 +61,10 @@ const getUnvisitedNeighbors = (grid, x, y) => {
         const yIncremented = y + increment;
         const horizontalNeighbor = xIncremented >= xBound || xIncremented < 0 ? null : grid[x + increment][y];
         const verticalNeighbor = yIncremented >= yBound || yIncremented < 0 ? null : grid[x][y + increment];
-        if (horizontalNeighbor && !horizontalNeighbor.visited) {
+        if (horizontalNeighbor && !horizontalNeighbor.visited && !horizontalNeighbor.isWall) {
             neighbors.push(horizontalNeighbor);
         }
-        if (verticalNeighbor && !verticalNeighbor.visited) {
+        if (verticalNeighbor && !verticalNeighbor.visited && !verticalNeighbor.isWall) {
             neighbors.push(verticalNeighbor);
         }
     }

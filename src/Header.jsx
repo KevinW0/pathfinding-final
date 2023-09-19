@@ -3,7 +3,7 @@ import { Button, ButtonGroup } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { selectors } from './redux_store';
 
-const Header = ({setSpeed, controlsDisabled, algorithms}) => {
+const Header = ({setSpeed, controlsDisabled, algorithms, resetAvailableOnly}) => {
 
     const isStartSelected = useSelector(selectors.selectStartBoolean);
     const isTargetSelected = useSelector(selectors.selectTargetBoolean);
@@ -15,7 +15,7 @@ const Header = ({setSpeed, controlsDisabled, algorithms}) => {
                 <SpeedSlider speedControlDisabled = {controlsDisabled} setSpeed = {setSpeed}></SpeedSlider>
             </div>
             <ButtonGroup className='col-start-8 col-span-4 justify-center'>
-                <Button disabled = {controlsDisabled} color='success' variant='contained' onClick={!algorithms ? null : (() => algorithms.dijkstra(isStartSelected, isTargetSelected))}>
+                <Button disabled = {controlsDisabled || resetAvailableOnly} color='success' variant='contained' onClick={!algorithms ? null : (() => algorithms.dijkstra(isStartSelected, isTargetSelected))}>
                     Run Dijkstra's Pathfinding Algorithm
                 </Button>
                 <Button disabled>More algorithms to come!</Button>
