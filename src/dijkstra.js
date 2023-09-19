@@ -1,4 +1,5 @@
-const dijkstra = async (grid, setGridCellFunction, startCell, targetCell) => {
+const dijkstra = async (grid, setGridCellFunction, startCell, targetCell, speed, disableSpeedControl) => {
+    disableSpeedControl(true);
     setGridCellFunction(startCell.x, startCell.y, { ...grid[startCell.x][startCell.y], distance: 0 });
 
     let candidates = [grid[startCell.x][startCell.y]];
@@ -10,7 +11,7 @@ const dijkstra = async (grid, setGridCellFunction, startCell, targetCell) => {
         candidates = getUnvisitedNeighbors(grid, currentNode.x, currentNode.y);
         updateDistancesAmongstNeighbors(currentNode, candidates, setGridCellFunction);
         candidates = getUnvisitedNeighbors(grid, currentNode.x, currentNode.y);
-        await delay(1);
+        await delay(speed);
     } while (currentNode && !grid[targetCell.x][targetCell.y].visited);
 
     if (currentNode) {
@@ -18,10 +19,11 @@ const dijkstra = async (grid, setGridCellFunction, startCell, targetCell) => {
         while (currentNode.predecessor.x != -1 && currentNode.predecessor.y != -1) {
             setGridCellFunction(currentNode.x, currentNode.y, { ...currentNode, isPredecessor: true });
             currentNode = grid[currentNode.predecessor.x][currentNode.predecessor.y];
-            await delay(10);
+            await delay(speed+10);
         }
     }
 
+    disableSpeedControl(false);
     return;
 };
 

@@ -1,10 +1,9 @@
-import React from 'react';
 import { Slider } from '@mui/material';
 
 const marks = [
     {
         value: 0,
-        label: 'Instant',
+        label: 'Fast',
     },
     {
         value: 250,
@@ -15,10 +14,22 @@ const marks = [
         label: 'Slow',
     },
 ];
-const SpeedSlider = () => (
+const SpeedSlider = ({ setSpeed, speedControlDisabled }) => (
     <>
         <h1> Speed Control (ms)</h1>
-        <Slider defaultValue={1} min={0} step={1} max={500} marks={marks} valueLabelDisplay='auto' size='small' />
+        <Slider
+            defaultValue={0}
+            min={0}
+            step={1}
+            max={500}
+            marks={marks}
+            valueLabelDisplay='auto'
+            size='small'
+            onChange={(event, value) => {
+                setSpeed(value);
+            }}
+            disabled = {speedControlDisabled}
+        />
     </>
 );
 

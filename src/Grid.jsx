@@ -1,15 +1,14 @@
 import Cell from './Cell';
 import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import dijkstra from './dijkstra';
-import { selectors } from './redux_store';
+import { selectors, actions } from './redux_store';
 
-const Grid = () => {
+const Grid = ({ speed, disableControls, setAlgorithms }) => {
     const [cells, setCells] = useState([]);
-    const isStartSelected = useSelector(selectors.selectStartBoolean);
-    const isTargetSelected = useSelector(selectors.selectTargetBoolean);
     const startCell = useSelector(selectors.selectStartCoords);
     const targetCell = useSelector(selectors.selectTargetCoords);
+    const dispatchFunc = useDispatch();
 
     const initCells = (rows, cols) => {
         const cellArray = Array(rows)
@@ -42,14 +41,22 @@ const Grid = () => {
 
     const reset = () => {
         initCells(20, 70);
+        dispatchFunc({ type: actions.resetAction });
     };
 
-    useEffect(() => reset(), []);
-    useEffect(() => {
+    const callDijkstra = (isStartSelected, isTargetSelected) => {
         if (isStartSelected && isTargetSelected) {
-            dijkstra(cells, changeCell, startCell, targetCell);
+            dijkstra(cells, changeCell, startCell, targetCell, speed, disableControls);
         }
-    }, [isStartSelected, isTargetSelected]);
+    };
+    useEffect(() => {
+        setAlgorithms({
+            dijkstra: callDijkstra,
+            reset,
+        });
+    }, [startCell, targetCell, speed]);
+
+    useEffect(() => reset(), []);
 
     return (
         <>
