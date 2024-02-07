@@ -8,7 +8,7 @@ const InnerCellContentWithIcon = (Icon) => (
         transition={{ duration: 1 }}
         style={{ position: 'fixed' }}
     >
-        <Icon style={{ display: 'inline' }} />
+        <Icon style={{ display: 'inline', marginBottom: '5px' }} />
     </motion.div>
 );
 
